@@ -136,25 +136,28 @@ def create_app(test_config=None):
     """
     @app.route('/questions', methods=['POST'])
     def post_question():
-        body = request.get_json()
-        new_question = body.get('question', None)
-        new_answer = body.get('answer',None)
-        new_category=body.get('category', None)
-        new_difficulty = body.get('difficulty', None)
-        question = Question(
-            question=new_question,
-            answer=new_answer,
-            category=new_category,
-            difficulty=new_difficulty
-        )
-        question.insert()
-        selection = Question.query.filter_by(id=question.id)
-        return jsonify(
-            {
-                "success": True,
-                "created": question.id,
-            }
-        )
+        try:
+            body = request.get_json()
+            new_question = body.get('question', None)
+            new_answer = body.get('answer',None)
+            new_category=body.get('category', None)
+            new_difficulty = body.get('difficulty', None)
+            question = Question(
+                question=new_question,
+                answer=new_answer,
+                category=new_category,
+                difficulty=new_difficulty
+            )
+            question.insert()
+            selection = Question.query.filter_by(id=question.id)
+            return jsonify(
+                {
+                    "success": True,
+                    "created": question.id,
+                }
+            )
+        except:
+            abort(422)
         
         
     @app.route('/questions/search', methods=['POST'])
@@ -167,13 +170,14 @@ def create_app(test_config=None):
                 question_list = [question.format() for question in questions]
                 return jsonify(
                     {
+                        'success': True,
                         'questions': question_list,
                         'total_questions':len(question_list),
                         'current_category':'hi'
                     }
                 )
         except:
-            abort(422)
+            abort(400)
     """
     @TODO:
     Create a GET endpoint to get questions based on category.
@@ -184,19 +188,23 @@ def create_app(test_config=None):
     """
     @app.route('/categories/<int:category_id>/questions')
     def category_questions(category_id):
-        category = Category.query.filter_by(id=category_id).first()
-        cat_str = str(category.type)
-        questions = Question.query.filter_by(category=category.id).all()
-        questions_list = [question.format() for question in questions]
-        return jsonify(
-            {
-                'success':True,
-                'questions': questions_list,
-                'total_questions':len(questions_list),
-                'current_category': category.type,
-            }
-        )
-        
+        try:
+            category = Category.query.filter_by(id=category_id).one_or_none()
+            if category is None:
+                abort(404)
+                
+            questions = Question.query.filter_by(category=category.id).all()
+            questions_list = [question.format() for question in questions]
+            return jsonify(
+                {
+                    'success':True,
+                    'questions': questions_list,
+                    'total_questions':len(questions_list),
+                    'current_category': category.type,
+                }
+            )
+        except:
+            abort(422)
 
     """
     @TODO:
@@ -223,6 +231,7 @@ def create_app(test_config=None):
                 question=None
             return jsonify(
                 {
+                    'success': True,
                     'question':question,
                 }
             )
