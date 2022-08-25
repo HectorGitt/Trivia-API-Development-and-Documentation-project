@@ -37,6 +37,7 @@ class TriviaTestCase(unittest.TestCase):
     Write at least one test for each test for successful operation and for expected errors.
     """
     def test_get_paginated_questions(self):
+        """Test GET request for paginated questions"""
         res = self.client().get('/questions')
         data = json.loads(res.data)
         
@@ -49,6 +50,7 @@ class TriviaTestCase(unittest.TestCase):
         
     
     def test_get_categories(self):
+        """Test GET request for categories"""
         res = self.client().get('/categories')
         data = json.loads(res.data)
         
@@ -58,6 +60,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         
     def test_get_question_search(self):
+        """Test POST request for searching questions"""
         res = self.client().post("/questions/search", json={"searchTerm": "who"})
         data = json.loads(res.data)
 
@@ -67,6 +70,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertGreater(data["total_questions"], 2)
     
     def test_create_new_question(self):
+        """Test POST request for creating new question"""
         res = self.client().post("/questions", json=self.new_question)
         data = json.loads(res.data)
         
@@ -75,6 +79,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['created'])
       
     def test_get_category_questions(self):
+        """Test GET request for category questions"""
         res = self.client().get("/categories/2/questions")
         data = json.loads(res.data)
         
@@ -86,16 +91,18 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['total_questions'])
         self.assertEqual(data['current_category'], category.type)
               
-    ''' def test_delete_question(self):
+    def test_delete_question(self):
+        '''Test DELETE request for deleting question'''
         res = self.client().delete("/questions/38")
         data = json.loads(res.data)
         
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertEqual(data['deleted'], 38)
-     '''
+    
      
     def test_quiz_questions(self):
+        """Test POST request for quiz questions"""
         res = self.client().post("/question/quiz", json={"previous_questions": [10], 'quiz_category': {'id':1}})
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
@@ -103,6 +110,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertNotEqual(data['question']['id'], 10)
     
     def test_404_category_questions(self):
+        """Test 404 error request for category questions"""
         res = self.client().get("/categories/399/questions")
         data = json.loads(res.data)
 
@@ -110,7 +118,8 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data["message"], "unprocessable")
     
-    def test_422_post_questions(self):
+    def test_422_post_quiz_questions(self):
+        """Test 422 error request for playing quiz"""
         res = self.client().post("/question/quiz") 
         data = json.loads(res.data)
 
@@ -119,6 +128,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'unprocessable')
         
     def test_400_question_search(self):
+        """Test 400 error request for searching questions"""
         res = self.client().post("/questions/search") 
         data = json.loads(res.data)
         
