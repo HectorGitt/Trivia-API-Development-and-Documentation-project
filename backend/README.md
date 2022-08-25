@@ -240,7 +240,7 @@ One note before you delve into your tasks: for each endpoint, you are expected t
 
 ```json
 {
-  "current_category": "hi",
+  "current_category": "Science",
   "questions": [
     {
       "answer": "Maya Angelou",
