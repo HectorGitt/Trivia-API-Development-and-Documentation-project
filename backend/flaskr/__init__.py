@@ -9,11 +9,16 @@ from models import setup_db, Question, Category
 QUESTIONS_PER_PAGE = 10
 
 def paginate_questions(request, selection):
+    #get page value from request
     page = request.args.get("page", 1, type=int)
+    #start value for pagination
     start = (page - 1) * QUESTIONS_PER_PAGE
+    #end value for pagination
     end = start + QUESTIONS_PER_PAGE
-
+    
+    #return questions based on pagination
     questions = [question.format() for question in selection]
+    
     current_questions = questions[start:end]
 
     return current_questions
@@ -55,7 +60,9 @@ def create_app(test_config=None):
 
     @app.route('/categories', methods=['GET'])
     def get_categories():
+        #get all categories from database
         categories = Category.query.all()
+        #create a dictionary of categories
         category_dict = {}
         for category in categories:
             category_dict[category.id] = category.type
@@ -82,9 +89,13 @@ def create_app(test_config=None):
 
     @app.route('/questions', methods=['GET'])
     def retrieve_questions():
+        #get all questions from database
         all_questions = Question.query.order_by(Question.id).all()
+        #paginatate questions
         selection = paginate_questions(request, all_questions)
+        #get all categories from database
         categories = Category.query.all()
+        #create a dictionary of questions
         category_dict = {}
         for category in categories:
             category_dict[category.id] = category.type
@@ -94,7 +105,7 @@ def create_app(test_config=None):
                 'questions': selection,
                 'total_questions': len(all_questions),
                 'categories': category_dict,
-                'current_category':category_dict,
+                'current_category':"Science",
             }
         )
     """
@@ -107,12 +118,16 @@ def create_app(test_config=None):
     @app.route('/questions/<int:question_id>', methods=['DELETE'])
     def delete_question(question_id):
         try:
+            #get question from database
             question = Question.query.filter(Question.id == question_id).one_or_none()
             
+            #check if question is none
             if question is None:
                 abort(404)
             question.delete()
+            #get all questions from database
             all_questiions = Question.query.order_by(Question.id).all()
+            #paginatate questions
             paginated_questions = paginate_questions(request, all_questiions)
             
             return jsonify(
@@ -137,19 +152,21 @@ def create_app(test_config=None):
     @app.route('/questions', methods=['POST'])
     def post_question():
         try:
+            #get data from request
             body = request.get_json()
             new_question = body.get('question', None)
             new_answer = body.get('answer',None)
             new_category=body.get('category', None)
             new_difficulty = body.get('difficulty', None)
+            #pass data to Question class
             question = Question(
                 question=new_question,
                 answer=new_answer,
                 category=new_category,
                 difficulty=new_difficulty
             )
+            #add question to database
             question.insert()
-            selection = Question.query.filter_by(id=question.id)
             return jsonify(
                 {
                     "success": True,
@@ -163,17 +180,21 @@ def create_app(test_config=None):
     @app.route('/questions/search', methods=['POST'])
     def search_question():
         try:
+            #get data from request
             body = request.get_json()
             search = body.get('searchTerm', None)
+            #check if search term exists
             if search:
+                #get questions from database filtering by search term
                 questions = Question.query.filter(Question.question.ilike(f'%{search}%')).all()
+                #format questions
                 question_list = [question.format() for question in questions]
                 return jsonify(
                     {
                         'success': True,
                         'questions': question_list,
                         'total_questions':len(question_list),
-                        'current_category':'hi'
+                        'current_category':'Science'
                     }
                 )
         except:
@@ -189,11 +210,16 @@ def create_app(test_config=None):
     @app.route('/categories/<int:category_id>/questions')
     def category_questions(category_id):
         try:
+            #get category from database
             category = Category.query.filter_by(id=category_id).one_or_none()
+            
+            #check if category is none
             if category is None:
                 abort(404)
-                
+            
+            #get questions from database filtering by category
             questions = Question.query.filter_by(category=category.id).all()
+            #format questions
             questions_list = [question.format() for question in questions]
             return jsonify(
                 {
@@ -221,10 +247,13 @@ def create_app(test_config=None):
     @app.route('/question/quiz', methods=["POST"])
     def quiz_questions():
         try:
+            #get data from request
             body = request.get_json()
             previous = body.get('previous_questions', None)
             category = body.get('quiz_category', None)
+            #get question from category excluding previous questions
             question = Question.query.filter(Question.category==category['id'], ~Question.id.in_(previous)).first()
+            #check if question exists
             if question:
                 question = question.format()
             else:
