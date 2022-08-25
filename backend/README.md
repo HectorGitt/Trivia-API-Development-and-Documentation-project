@@ -67,17 +67,14 @@ One note before you delve into your tasks: for each endpoint, you are expected t
 8. Create a `POST` endpoint to get questions to play the quiz. This endpoint should take a category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions.
 9. Create error handlers for all expected errors including 400, 404, 422, and 500.
 
-## Documenting your Endpoints
+### API DOCUMENTATION
 
-You will need to provide detailed documentation of your API endpoints including the URL, request parameters, and the response body. Use the example below as a reference.
+`GET '/categories'`
 
-### Documentation Example
-
-`GET '/api/v1.0/categories'`
-
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
+- Fetches an object containing the categories in which the keys are the ids and the value is the corresponding string of the category
 - Request Arguments: None
 - Returns: An object with a single key, `categories`, that contains an object of `id: category_string` key: value pairs.
+- Example Response:
 
 ```json
 {
@@ -87,6 +84,270 @@ You will need to provide detailed documentation of your API endpoints including 
   "4": "History",
   "5": "Entertainment",
   "6": "Sports"
+}
+```
+
+`GET '/questions?page=<int:page_number>'`
+
+- Fetches a dictionary of questions on a per page basis
+- Request Arguments: `page:int`
+- Returns: An object that contains the questions, categories and the object of the current category.
+- Example Response:
+
+```json
+{
+  "categories": {
+    "1": "Science",
+    "2": "Art",
+    "3": "Geography",
+    "4": "History",
+    "5": "Entertainment",
+    "6": "Sports"
+  },
+  "current_category": {
+    "1": "Science",
+  },
+  "questions": [
+    {
+      "answer": "Maya Angelou",
+      "category": 4,
+      "difficulty": 2,
+      "id": 5,
+      "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+    },
+    {
+      "answer": "Edward Scissorhands",
+      "category": 5,
+      "difficulty": 3,
+      "id": 6,
+      "question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
+    },
+    {
+      "answer": "Brazil",
+      "category": 6,
+      "difficulty": 3,
+      "id": 10,
+      "question": "Which is the only team to play in every soccer World Cup tournament?"
+    },
+    {
+      "answer": "Uruguay",
+      "category": 6,
+      "difficulty": 4,
+      "id": 11,
+      "question": "Which country won the first ever soccer World Cup in 1930?"
+    },
+    {
+      "answer": "George Washington Carver",
+      "category": 4,
+      "difficulty": 2,
+      "id": 12,
+      "question": "Who invented Peanut Butter?"
+    },
+    {
+      "answer": "Lake Victoria",
+      "category": 3,
+      "difficulty": 2,
+      "id": 13,
+      "question": "What is the largest lake in Africa?"
+    },
+    {
+      "answer": "The Palace of Versailles",
+      "category": 3,
+      "difficulty": 3,
+      "id": 14,
+      "question": "In which royal palace would you find the Hall of Mirrors?"
+    },
+    {
+      "answer": "Agra",
+      "category": 3,
+      "difficulty": 2,
+      "id": 15,
+      "question": "The Taj Mahal is located in which Indian city?"
+    },
+    {
+      "answer": "Escher",
+      "category": 2,
+      "difficulty": 1,
+      "id": 16,
+      "question": "Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"
+    },
+    {
+      "answer": "One",
+      "category": 2,
+      "difficulty": 4,
+      "id": 18,
+      "question": "How many paintings did Van Gogh sell in his lifetime?"
+    }
+  ],
+  "success": true,
+  "total_questions": 14
+}
+```
+
+`DELETE '/questions/<int:question_id>'`
+
+- Deletes a question from the database
+- Request Arguments: `int:question_id`
+- Returns: The id of the question that was deleted.
+- Example Response:
+
+```json
+{
+  "deleted": 4,
+  "success": true
+}
+```
+
+`POST '/questions'`
+
+- Saves a new question object in the database
+- Request Arguments: the question object containing the question, answer, category id, and difficulty.
+
+- Example Request Body:
+```json
+{
+  "answer": "Alexander Fleming",
+  "category": 1,
+  "difficulty": 3,
+  "id": 21,
+  "question": "Who discovered penicillin?"
+}
+```
+- Returns: The id of the question that was created.
+- Example Response:
+
+```json
+{
+  "success": true,
+  "created": 4
+}
+```
+
+`POST '/questions/search'`
+
+- Runs a case insensitive search on the questions in the database
+- Request Arguments: An object containing the search parameter.
+
+- Request Body Example:
+
+```json
+{
+  "searchTerm": "whose"
+}
+```
+- Returns: The questions that contains the keyword searched.
+- Example Response:
+
+```json
+{
+  "current_category": "hi",
+  "questions": [
+    {
+      "answer": "Maya Angelou",
+      "category": 4,
+      "difficulty": 2,
+      "id": 5,
+      "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+    },
+    {
+      "answer": "Edward Scissorhands",
+      "category": 5,
+      "difficulty": 3,
+      "id": 6,
+      "question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
+    },
+    {
+      "answer": "Brazil",
+      "category": 6,
+      "difficulty": 3,
+      "id": 10,
+      "question": "Which is the only team to play in every soccer World Cup tournament?"
+    },
+    {
+      "answer": "Escher",
+      "category": 2,
+      "difficulty": 1,
+      "id": 16,
+      "question": "Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"
+    },
+    {
+      "answer": "Blood",
+      "category": 1,
+      "difficulty": 4,
+      "id": 22,
+      "question": "Hematology is a branch of medicine involving the study of what?"
+    }
+  ],
+  "total_questions": 5
+}
+```
+
+`GET '/categories/<int:category_id>/questions'`
+
+- Runs a case insensitive search on the questions in the database
+- Request Arguments: An object containing the search parameter.
+- Returns: The id of the question that was created.
+- Example Response:
+
+```json
+{
+  "current_category": "Art",
+  "questions": [
+    {
+      "answer": "Escher",
+      "category": 2,
+      "difficulty": 1,
+      "id": 16,
+      "question": "Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"
+    },
+    {
+      "answer": "One",
+      "category": 2,
+      "difficulty": 4,
+      "id": 18,
+      "question": "How many paintings did Van Gogh sell in his lifetime?"
+    },
+    {
+      "answer": "Jackson Pollock",
+      "category": 2,
+      "difficulty": 2,
+      "id": 19,
+      "question": "Which American artist was a pioneer of Abstract Expressionism, and a leading exponent of action painting?"
+    }
+  ],
+  "success": true,
+  "total_questions": 3
+}
+```
+
+`GET '/question/quiz'`
+
+- Returns a question based on the category object passed in. 
+- Request Arguments: A list containing previous questions id and category object of the question .
+- Request Body Example:
+```json
+{
+  "previous_questions": [1,10],
+  "quiz_category": {
+    "id": 1,
+  }
+}
+```
+
+- Returns: the question object whose id is not in previous question ids list.
+
+- Example Response:
+
+```json
+{
+  "success":true,
+  "question":{
+      "answer": "Jackson Pollock",
+      "category": 2,
+      "difficulty": 2,
+      "id": 19,
+      "question": "Which American artist was a pioneer of Abstract Expressionism, and a leading exponent of action painting?"
+    }
 }
 ```
 
