@@ -89,9 +89,9 @@ One note before you delve into your tasks: for each endpoint, you are expected t
 
 `GET '/questions?page=<int:page_number>'`
 
-- Fetches a dictionary of questions on a per page basis
+- Fetches an object containing `questions` on a per page basis
 - Request Arguments: `page:int`
-- Returns: An object that contains the questions, categories and the object of the current category.
+- Returns: An object that contains the `questions`, `categories` and the object of the `current category`.
 - Example Response:
 
 ```json
@@ -188,7 +188,7 @@ One note before you delve into your tasks: for each endpoint, you are expected t
 
 - Deletes a question from the database
 - Request Arguments: `int:question_id`
-- Returns: The id of the question that was deleted.
+- Returns: The `id` of the question that was deleted.
 - Example Response:
 
 ```json
@@ -201,7 +201,7 @@ One note before you delve into your tasks: for each endpoint, you are expected t
 `POST '/questions'`
 
 - Saves a new question object in the database
-- Request Arguments: the question object containing the question, answer, category id, and difficulty.
+- Request Arguments: the question object containing the `question`, `answer`, `category id`, and `difficulty`.
 
 - Example Request Body:
 ```json
@@ -213,7 +213,7 @@ One note before you delve into your tasks: for each endpoint, you are expected t
   "question": "Who discovered penicillin?"
 }
 ```
-- Returns: The id of the question that was created.
+- Returns: The `id` of the question that was created.
 - Example Response:
 
 ```json
@@ -225,7 +225,7 @@ One note before you delve into your tasks: for each endpoint, you are expected t
 
 `POST '/questions/search'`
 
-- Runs a case insensitive search on the questions in the database
+- Runs a case insensitive search on the `questions` in the database
 - Request Arguments: An object containing the search parameter.
 
 - Request Body Example:
@@ -235,7 +235,7 @@ One note before you delve into your tasks: for each endpoint, you are expected t
   "searchTerm": "whose"
 }
 ```
-- Returns: The questions that contains the keyword searched.
+- Returns: The `questions` that contains the keyword searched.
 - Example Response:
 
 ```json
@@ -284,9 +284,9 @@ One note before you delve into your tasks: for each endpoint, you are expected t
 
 `GET '/categories/<int:category_id>/questions'`
 
-- Runs a case insensitive search on the questions in the database
-- Request Arguments: An object containing the search parameter.
-- Returns: The id of the question that was created.
+- Fetch questions based on `categories`
+- Request Arguments: `int:category_id`
+- Returns: The `questions` belonging to the specified category.
 - Example Response:
 
 ```json
@@ -322,7 +322,7 @@ One note before you delve into your tasks: for each endpoint, you are expected t
 
 `GET '/question/quiz'`
 
-- Returns a question based on the category object passed in. 
+- Returns a single question belonging to the category object passed in. 
 - Request Arguments: A list containing previous questions id and category object of the question .
 - Request Body Example:
 ```json
