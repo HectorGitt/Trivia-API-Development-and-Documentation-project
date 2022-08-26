@@ -252,7 +252,10 @@ def create_app(test_config=None):
             previous = body.get('previous_questions', None)
             category = body.get('quiz_category', None)
             #get question from category excluding previous questions
-            question = Question.query.filter(Question.category==category['id'], ~Question.id.in_(previous)).first()
+            if category['id'] == 0:
+                question = Question.query.filter(~Question.id.in_(previous)).first()
+            else:
+                question = Question.query.filter(Question.category==category['id'], ~Question.id.in_(previous)).first()
             #check if question exists
             if question:
                 question = question.format()
