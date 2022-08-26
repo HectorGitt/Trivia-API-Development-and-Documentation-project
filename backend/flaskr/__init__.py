@@ -253,9 +253,9 @@ def create_app(test_config=None):
             category = body.get('quiz_category', None)
             #get question from category excluding previous questions
             if category['id'] == 0:
-                question = Question.query.filter(~Question.id.in_(previous)).first()
+                question = random.choice(Question.query.filter(~Question.id.in_(previous)).all())
             else:
-                question = Question.query.filter(Question.category==category['id'], ~Question.id.in_(previous)).first()
+                question = random.choice(Question.query.filter(Question.category==category['id'], ~Question.id.in_(previous)).all())
             #check if question exists
             if question:
                 question = question.format()
